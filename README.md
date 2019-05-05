@@ -1,2 +1,8 @@
 # GitSync
-Makes sure all git repos have the correct remotes and are pushed
+
+Makes sure all your git repos are fully pushed to the right location
+
+ - Scan for all git repos
+ - Add/update remote paths and push
+
+ 
