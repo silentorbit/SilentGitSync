@@ -102,6 +102,8 @@ namespace SilentOrbit.GitSync
                     if (Path.GetDirectoryName(gitPath) == sourceBase)
                         continue;
                 }
+                if (gitPath.StartsWith(@"C:\Users\peter\Adductor\DriveSync\My Drive"))
+                    continue;
 
                 var repoPath = Path.GetDirectoryName(gitPath);
                 var source = new Repo(repoPath);
