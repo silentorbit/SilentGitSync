@@ -15,7 +15,7 @@ namespace SilentOrbit.GitSync
 
             while (source.HasUncommittedChanges())
             {
-                source.Status();
+                //source.Status();
 
                 var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
                 psi.WorkingDirectory = source.Path;
@@ -24,12 +24,39 @@ namespace SilentOrbit.GitSync
                     p.WaitForExit();
                 }
 
-                //if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
-                //    continue;
+                if (source.HasUncommittedChanges())
+                {
+                    //Still uncommited changes
+                    if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
+                        continue;
+                }
 
                 break;
             }
 
+            //Fetch and Merge
+            if (source.HasUncommittedChanges() == false)
+            {
+                source.Fetch();
+                source.Merge();
+
+                while (source.HasUncommittedChanges())
+                {
+                    var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
+                    psi.WorkingDirectory = source.Path;
+                    using (var p = Process.Start(psi))
+                    {
+                        p.WaitForExit();
+                    }
+
+                    if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
+                        continue;
+
+                    break;
+                }
+            }
+
+            //Push
             Console.WriteLine(" === [" + target.Name + "] " + target.Git);
 
             source.Config("pack.packSizeLimit", "1g");
