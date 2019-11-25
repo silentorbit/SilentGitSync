@@ -37,8 +37,8 @@ namespace SilentOrbit.GitSync
             //Fetch and Merge
             if (source.HasUncommittedChanges() == false)
             {
-                source.Fetch();
-                source.Merge();
+                source.Fetch(target);
+                source.Merge(target);
 
                 while (source.HasUncommittedChanges())
                 {

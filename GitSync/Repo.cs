@@ -110,14 +110,14 @@ namespace SilentOrbit.GitSync
             RunGitThrow("remote add " + remote.Name + " \"" + remote.Git.Path + "\"");
         }
 
-        public void Fetch()
+        public void Fetch(Remote remote)
         {
-            RunGitThrow("fetch");
+            RunGitThrow("fetch " + remote.Name);
         }
 
-        public void Merge()
+        public void Merge(Remote remote)
         {
-            RunGitThrow("merge --no-commit");
+            RunGitThrow("merge --no-commit " + remote.Name + "/master");
         }
 
         internal void Push(Remote remote)
