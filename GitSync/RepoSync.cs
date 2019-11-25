@@ -34,29 +34,7 @@ namespace SilentOrbit.GitSync
                 break;
             }
 
-            //Fetch and Merge
-            if (source.HasUncommittedChanges() == false)
-            {
-                source.Fetch(target);
-                source.Merge(target);
-
-                while (source.HasUncommittedChanges())
-                {
-                    var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
-                    psi.WorkingDirectory = source.Path;
-                    using (var p = Process.Start(psi))
-                    {
-                        p.WaitForExit();
-                    }
-
-                    if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
-                        continue;
-
-                    break;
-                }
-            }
-
-            //Push
+            //Remote config
             Console.WriteLine(" === [" + target.Name + "] " + target.Git);
 
             source.Config("pack.packSizeLimit", "1g");
@@ -64,7 +42,33 @@ namespace SilentOrbit.GitSync
         retry:
             try
             {
+                var existed = target.Git.Exists();
+
                 FixRemote(source, target);
+
+                //Fetch and Merge
+                if (existed && (source.HasUncommittedChanges() == false))
+                {
+                    source.Fetch(target);
+                    source.Merge(target);
+
+                    while (source.HasUncommittedChanges())
+                    {
+                        var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
+                        psi.WorkingDirectory = source.Path;
+                        using (var p = Process.Start(psi))
+                        {
+                            p.WaitForExit();
+                        }
+
+                        if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
+                            continue;
+
+                        break;
+                    }
+                }
+
+                //Push
                 source.Push(target);
             }
             catch (Exception ex)
