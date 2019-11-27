@@ -147,7 +147,8 @@ namespace SilentOrbit.GitSync
                 p.StartInfo = new ProcessStartInfo
                 {
                     FileName = "ssh",
-                    Arguments = SshHost + " " + args
+                    Arguments = SshHost + " " + args,
+                    UseShellExecute = false,
                 };
                 p.Start();
                 p.WaitForExit();
