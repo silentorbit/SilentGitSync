@@ -42,7 +42,7 @@ namespace SilentOrbit.GitSync
         retry:
             try
             {
-                var existed = !target.Git.IsSSH && target.Git.Exists();
+                var existed = target.Git.IsSSH || target.Git.Exists();
 
                 FixRemote(source, target);
 
