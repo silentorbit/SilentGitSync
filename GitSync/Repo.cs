@@ -19,6 +19,8 @@ namespace SilentOrbit.GitSync
 
         public bool HasUncommittedChanges()
         {
+            if (IsBare)
+                return false;
             return RunGit("diff-index --quiet HEAD --") == 1;
         }
 
@@ -31,6 +33,25 @@ namespace SilentOrbit.GitSync
         /// If we can create and modify remote repos
         /// </summary>
         public bool CanModify { get; }
+        public bool IsBare
+        {
+            get
+            {
+                var bare = Path.EndsWith(".git");
+#if DEBUG
+                switch (Path)
+                {
+                    case "R:\\Git\\Adductor\\DriveSync.git":
+                        Debug.Assert(bare == true);
+                        break;
+                    default:
+                        Debug.Assert(bare == false);
+                        break;
+                }
+#endif
+                return bare;
+            }
+        }
 
         public Repo(string path)
         {
@@ -122,7 +143,9 @@ namespace SilentOrbit.GitSync
 
         internal void Push(Remote remote)
         {
-            RunGitThrow("push --all " + remote.Name);
+            // push --all "nas"
+            // push -u --recurse-submodules=on-demand --progress "nas" refs/heads/master:refs/heads/master
+            RunGitThrow("push -u " + remote.Name + " refs/heads/master:refs/heads/master");
         }
 
         #region Git and SSH commands

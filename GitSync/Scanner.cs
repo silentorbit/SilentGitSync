@@ -51,6 +51,12 @@ namespace SilentOrbit.GitSync
 
             foreach (var repo in config.Repo)
             {
+                if (ConnectedDrive(repo.Path) == false)
+                {
+                    Console.WriteLine("Skipping not connected drive: " + remoteName + ": " + repo.Path);
+                    continue;
+                }
+
                 RunRepo(repo, remoteName);
             }
         }

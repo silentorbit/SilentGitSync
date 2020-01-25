@@ -40,6 +40,11 @@ namespace SilentOrbit.GitSync
         string GenerateRemoteFlatGit(string sourceRepo)
         {
             var name = Path.GetFileName(sourceRepo) + ".git";
+            
+            //Make sure remote for bare repos doesn't get double .git extension
+            if (name.EndsWith(".git.git"))
+                name = name.Substring(0, name.Length - ".git".Length);
+
             if (Git.Path.StartsWith("ssh://", StringComparison.OrdinalIgnoreCase))
                 return Git.Path.TrimEnd('/') + "/" + name;
             else

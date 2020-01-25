@@ -50,7 +50,8 @@ namespace SilentOrbit.GitSync
                 if (existed && (source.HasUncommittedChanges() == false))
                 {
                     source.Fetch(target);
-                    source.Merge(target);
+                    if(source.IsBare == false)
+                        source.Merge(target);
 
                     while (source.HasUncommittedChanges())
                     {
