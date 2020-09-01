@@ -32,17 +32,13 @@ namespace SilentOrbit.GitSync
             //Run in remote order
             foreach (var kv in config.Remote)
             {
-                string remoteName = kv.Key;
-                string remotePath = kv.Value;
-
-                RunRemote(remoteName);
+                RunRemote(remoteName: kv.Key, remotePath: kv.Value);
             }
         }
 
-        void RunRemote(string remoteName)
+        void RunRemote(string remoteName, string remotePath)
         {
             //Skip disconnected drives
-            var remotePath = config.Remote[remoteName];
             if (ConnectedDrive(remotePath) == false)
             {
                 Console.WriteLine("Skipping not connected drive: " + remoteName + ": " + remotePath);
@@ -121,15 +117,18 @@ namespace SilentOrbit.GitSync
 
         static IEnumerable<string> ScanGit(string root)
         {
+            var list = new List<string>();
+
             foreach (var path in Directory.EnumerateDirectories(root, ".git", SearchOption.AllDirectories))
-            {
-                yield return path;
-            }
+                list.Add(path);
 
             foreach (var path in Directory.EnumerateFiles(root, ".git", SearchOption.AllDirectories))
-            {
-                yield return path;
-            }
+                list.Add(path);
+
+            //Reverese sort order to make sure sub repos are synchronized before the main repos are
+            list.Sort();
+            list.Reverse();
+            return list;
         }
     }
 }
