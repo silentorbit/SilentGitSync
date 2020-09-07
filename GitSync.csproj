@@ -13,9 +13,5 @@
   <ItemGroup>
     <None Remove=".git" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\..\MUR\ThirdParty\SilentSync\SilentDisk\SilentDisk.csproj" />
-  </ItemGroup>
 
 </Project>
