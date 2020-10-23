@@ -143,9 +143,28 @@ namespace SilentOrbit.GitSync
 
         internal void Push(Remote remote)
         {
+            var branches = BranchList();
             // push --all "nas"
             // push -u --recurse-submodules=on-demand --progress "nas" refs/heads/master:refs/heads/master
-            RunGitThrow("push -u " + remote.Name + " refs/heads/master:refs/heads/master");
+            foreach (var branch in branches)
+                RunGitThrow("push -u " + remote.Name + " " + branch);
+        }
+
+        public List<string> BranchList()
+        {
+            var exit = RunGit("branch --list", out string output);
+            if (exit != 0)
+                throw new Exception("Failed to run: git branch --list");
+            var lines = output.Split('\n');
+            var branches = new List<string>();
+            foreach (var l in lines)
+            {
+                var br = l.Trim(' ', '*', '\r');
+                if (br == "")
+                    continue;
+                branches.Add(br);
+            }
+            return branches;
         }
 
         #region Git and SSH commands
