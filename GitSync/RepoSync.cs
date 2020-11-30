@@ -50,6 +50,8 @@ namespace SilentOrbit.GitSync
                 if (existed && (source.HasUncommittedChanges() == false))
                 {
                     source.Fetch(target);
+                    /* Disabled merge since we can't be sure what branch we're on
+                     * Better to keep this manually
                     if (source.IsBare == false)
                     {
                         while (true)
@@ -67,7 +69,7 @@ namespace SilentOrbit.GitSync
                                     break;
                             }
                         }
-                    }
+                    }*/
 
                     while (source.HasUncommittedChanges())
                     {

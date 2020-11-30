@@ -136,11 +136,6 @@ namespace SilentOrbit.GitSync
             RunGitThrow("fetch " + remote.Name);
         }
 
-        public void Merge(Remote remote)
-        {
-            RunGitThrow("merge --no-commit " + remote.Name + "/master");
-        }
-
         internal void Push(Remote remote)
         {
             var branches = BranchList();
