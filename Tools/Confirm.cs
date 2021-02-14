@@ -64,7 +64,9 @@ namespace SilentOrbit.Tools
                 Console.ReadKey();
 
             Console.ResetColor();
-            Console.Write("    " + options + " ...");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("    " + options);
+            Console.ResetColor();
             var key = Console.ReadKey().Key;
             Console.WriteLine();
             return key;
