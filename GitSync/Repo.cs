@@ -154,7 +154,7 @@ namespace SilentOrbit.GitSync
             var branches = new List<string>();
             foreach (var l in lines)
             {
-                var br = l.Trim(' ', '*', '\r');
+                var br = l.Trim(' ', '*', '\r', '+');
                 if (br == "")
                     continue;
                 branches.Add(br);
