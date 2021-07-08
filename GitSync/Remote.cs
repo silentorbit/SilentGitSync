@@ -10,14 +10,14 @@ namespace SilentOrbit.GitSync
     /// </summary>
     class Remote
     {
-        readonly Config config;
+        public readonly Config SyncConfig;
 
         public string Name { get; set; }
         public Repo Git { get; set; }
 
         public Remote(Config config, string remoteName, string remotePath = null)
         {
-            this.config = config;
+            this.SyncConfig = config;
             this.Name = remoteName;
             if (remotePath == null)
                 remotePath = config.Remote[Name];
@@ -32,9 +32,9 @@ namespace SilentOrbit.GitSync
         public Remote GenerateRemote(Repo repo)
         {
             var path = GenerateRemoteFlatGit(repo.Path);
-            if (config.RemoteAlias.TryGetValue(path, out var newPath))
+            if (SyncConfig.RemoteAlias.TryGetValue(path, out var newPath))
                 path = newPath;
-            return new Remote(config, Name, path);
+            return new Remote(SyncConfig, Name, path);
         }
 
         string GenerateRemoteFlatGit(string sourceRepo)
@@ -64,7 +64,7 @@ namespace SilentOrbit.GitSync
             else
                 path = path.TrimEnd('\\') + "\\" + subPath.Replace("/", "\\").TrimStart('\\');
 
-            return new Remote(config, Name, path);
+            return new Remote(SyncConfig, Name, path);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace SilentOrbit.GitSync
                 FixRemote(source, target);
 
                 //Fetch and Merge
-                if (existed && (source.HasUncommittedChanges() == false))
+                if (target.SyncConfig.FetchBeforePush && existed && (source.HasUncommittedChanges() == false))
                 {
                     source.Fetch(target);
                     /* Disabled merge since we can't be sure what branch we're on

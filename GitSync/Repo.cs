@@ -142,12 +142,19 @@ namespace SilentOrbit.GitSync
             // push --all "nas"
             // push -u --recurse-submodules=on-demand --progress "nas" refs/heads/master:refs/heads/master
             foreach (var branch in branches)
+            {
+                RunGit("rev-parse " + branch, out string localHash);
+                RunGit("rev-parse " + remote.Name + "/" + branch, out string remoteHash);
+                if (localHash == remoteHash && !string.IsNullOrWhiteSpace(localHash))
+                    continue;
+
                 RunGitThrow("push -u " + remote.Name + " " + branch);
+            }
         }
 
-        public List<string> BranchList()
+        public List<string> BranchList(bool remote = false)
         {
-            var exit = RunGit("branch --list", out string output);
+            var exit = RunGit("branch --list" + (remote ? " --all" : ""), out string output);
             if (exit != 0)
                 throw new Exception("Failed to run: git branch --list");
             var lines = output.Split('\n');

@@ -23,6 +23,11 @@ namespace SilentOrbit.GitSync
         public Dictionary<string, string> RemoteAlias { get; set; } = new Dictionary<string, string>();
 
         /// <summary>
+        /// Fetch and merge before push
+        /// </summary>
+        public bool FetchBeforePush { get; set; }
+
+        /// <summary>
         /// Check configuration for mistakes
         /// </summary>
         public void Validate()
