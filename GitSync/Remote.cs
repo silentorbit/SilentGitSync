@@ -31,24 +31,35 @@ namespace SilentOrbit.GitSync
 
         public Remote GenerateRemote(Repo repo)
         {
-            var path = GenerateRemoteFlatGit(repo.Path);
+            var path = GenerateRemoteFlatGit(repo.Path, out var name);
             if (SyncConfig.RemoteAlias.TryGetValue(path, out var newPath))
+            {
+                if (string.IsNullOrWhiteSpace(newPath))
+                    return null;
                 path = newPath;
+            }
+            if (SyncConfig.RemoteAlias.TryGetValue(name, out newPath))
+            {
+                if (string.IsNullOrWhiteSpace(newPath))
+                    return null;
+
+                throw new NotImplementedException("Can only block by name");
+            }
             return new Remote(SyncConfig, Name, path);
         }
 
-        string GenerateRemoteFlatGit(string sourceRepo)
+        string GenerateRemoteFlatGit(string sourceRepo, out string name)
         {
-            var name = Path.GetFileName(sourceRepo) + ".git";
-            
+            name = Path.GetFileName(sourceRepo);
+
             //Make sure remote for bare repos doesn't get double .git extension
-            if (name.EndsWith(".git.git"))
+            if (name.EndsWith(".git"))
                 name = name.Substring(0, name.Length - ".git".Length);
 
             if (Git.Path.StartsWith("ssh://", StringComparison.OrdinalIgnoreCase))
-                return Git.Path.TrimEnd('/') + "/" + name;
+                return Git.Path.TrimEnd('/') + "/" + name + ".git";
             else
-                return Path.Combine(Git.Path, name);
+                return Path.Combine(Git.Path, name + ".git");
         }
 
         /// <summary>
