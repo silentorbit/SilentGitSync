@@ -90,6 +90,9 @@ namespace SilentOrbit.GitSync
             {
                 //Single repo
                 var gitRepo = new Repo(repo.Path);
+                if (gitRepo.IsWorkTree)
+                    return; //Skip worktrees as their main repo will be taken care of
+
                 var remote = remoteBase.GenerateRemote(gitRepo);
                 RepoSync.SyncRepo(gitRepo, remote);
             }
@@ -109,6 +112,8 @@ namespace SilentOrbit.GitSync
 
                 var repoPath = Path.GetDirectoryName(gitPath);
                 var source = new Repo(repoPath);
+                if (source.IsWorkTree)
+                    continue; //Skip worktrees as their main repo will be taken care of
 
                 var target = remoteBase.GenerateRemote(source);
                 RepoSync.SyncRepo(source, target);

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using static System.IO.Path;
 
 namespace SilentOrbit.GitSync
 {
@@ -53,6 +54,8 @@ namespace SilentOrbit.GitSync
             }
         }
 
+        public bool IsWorkTree { get; }
+
         public Repo(string path)
         {
             this.Path = path;
@@ -78,6 +81,29 @@ namespace SilentOrbit.GitSync
 
             Debug.Assert((path.Contains("@") || path.Contains("ssh://")) == IsSSH);
             CanModify = IsSSH == false;
+
+            IsWorkTree = DetermineWorkTree(Path, IsSSH);
+        }
+
+        static bool DetermineWorkTree(string path, bool isSSH)
+        {
+            if (isSSH)
+                return false;
+
+            var gitPath = Combine(path, ".git");
+            if (Directory.Exists(gitPath))
+                return false;
+            if (File.Exists(gitPath) == false)
+                throw new NotImplementedException();
+
+            var content = File.ReadAllText(gitPath);
+            if (content.StartsWith("gitdir: ") == false)
+                throw new NotImplementedException();
+            if (content.Contains(".git/modules/"))
+                return false;
+            if (content.Contains(".git/worktrees/"))
+                return true;
+            throw new NotImplementedException();
         }
 
         public override string ToString() => Path;
