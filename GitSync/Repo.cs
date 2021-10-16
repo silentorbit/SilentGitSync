@@ -228,6 +228,7 @@ namespace SilentOrbit.GitSync
 
         int RunGit(string args, out string output)
         {
+            Console.WriteLine("git " + args);
             var psi = new ProcessStartInfo();
 
             if (IsSSH)
@@ -264,6 +265,8 @@ namespace SilentOrbit.GitSync
 
         int RunGit(string args)
         {
+            Console.WriteLine("git " + args);
+
             var psi = new ProcessStartInfo();
 
             bool gitWorkDir = args.StartsWith("init ") == false;
