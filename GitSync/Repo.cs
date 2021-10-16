@@ -94,7 +94,7 @@ namespace SilentOrbit.GitSync
             if (Directory.Exists(gitPath))
                 return false;
             if (File.Exists(gitPath) == false)
-                throw new NotImplementedException();
+                return false; //Bare repo
 
             var content = File.ReadAllText(gitPath);
             if (content.StartsWith("gitdir: ") == false)

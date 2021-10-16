@@ -76,7 +76,7 @@ namespace SilentOrbit.GitSync
             if (repo.Remote.Contains(remoteName) == false)
                 return;
 
-            var remoteBase = new Remote(config, remoteName);
+            var remoteBase = new RemoteBase(config, remoteName);
 
             if (repo.RecursiveOnly)
             {
@@ -98,7 +98,7 @@ namespace SilentOrbit.GitSync
             }
         }
 
-        static void Scan(string sourceBase, Remote remoteBase, bool skipRoot = false)
+        static void Scan(string sourceBase, RemoteBase remoteBase, bool skipRoot = false)
         {
             foreach (var gitPath in ScanGit(sourceBase))
             {
