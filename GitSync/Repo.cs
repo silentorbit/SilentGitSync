@@ -169,8 +169,8 @@ namespace SilentOrbit.GitSync
             // push -u --recurse-submodules=on-demand --progress "nas" refs/heads/master:refs/heads/master
             foreach (var branch in branches)
             {
-                RunGit("rev-parse " + branch, out string localHash);
-                RunGit("rev-parse " + remote.Name + "/" + branch, out string remoteHash);
+                RunGit("rev-parse " + branch + " --", out string localHash);
+                RunGit("rev-parse " + remote.Name + "/" + branch + " --", out string remoteHash);
                 if (localHash == remoteHash && !string.IsNullOrWhiteSpace(localHash))
                     continue;
 
