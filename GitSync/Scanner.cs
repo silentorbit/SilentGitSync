@@ -27,69 +27,39 @@ namespace SilentOrbit.GitSync
             config.Validate();
         }
 
-        public void Run()
+        public void RunAllRemotes()
         {
-            //Run in remote order
-            foreach (var kv in config.Remote)
-            {
-                RunRemote(remoteName: kv.Key, remotePath: kv.Value);
-            }
+            foreach (var remoteName in config.Remote.Keys)
+                RunRemote(remoteName);
         }
 
-        void RunRemote(string remoteName, string remotePath)
+        public void RunRemote(string remoteName)
         {
-            //Skip disconnected drives
-            if (ConnectedDrive(remotePath) == false)
-            {
-                Console.WriteLine("Skipping not connected drive: " + remoteName + ": " + remotePath);
-                return;
-            }
-
             foreach (var repo in config.Repo)
             {
-                if (ConnectedDrive(repo.Path) == false)
-                {
-                    Console.WriteLine("Skipping not connected drive: " + remoteName + ": " + repo.Path);
-                    continue;
-                }
-
                 RunRepo(repo, remoteName);
             }
         }
 
-        /// <summary>
-        /// Return true if a local drive is connected.
-        /// Return true on all remote repos.
-        /// </summary>
-        static bool ConnectedDrive(string remotePath)
+        void RunRepo(Config.RepoConfig config, string remoteName)
         {
-            var index = remotePath.IndexOf(@":\");
-            if (index == -1)
-                return true; //Not a local drive
-
-            var drive = remotePath.Substring(0, index + 2);
-            return Directory.Exists(drive);
-        }
-
-        void RunRepo(Config.RepoConfig repo, string remoteName)
-        {
-            if (repo.Remote.Contains(remoteName) == false)
+            if (config.Remote.Contains(remoteName) == false)
                 return;
 
-            var remoteBase = new RemoteBase(config, remoteName);
+            var remoteBase = new RemoteBase(this.config, remoteName);
 
-            if (repo.RecursiveOnly)
+            if (config.RecursiveOnly)
             {
-                Scan(repo.Path, remoteBase, skipRoot: true);
+                Scan(config.Path, remoteBase, skipRoot: true);
             }
-            else if (repo.Recursive)
+            else if (config.Recursive)
             {
-                Scan(repo.Path, remoteBase);
+                Scan(config.Path, remoteBase);
             }
             else
             {
                 //Single repo
-                var gitRepo = new Repo(repo.Path);
+                var gitRepo = new Repo(config.Path);
                 if (gitRepo.IsWorkTree)
                     return; //Skip worktrees as their main repo will be taken care of
 

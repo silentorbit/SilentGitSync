@@ -20,6 +20,8 @@ namespace SilentOrbit.GitSync
             RemotePath = config.Remote[Name];
         }
 
+        public override string ToString() => Name + ": " + RemotePath;
+
         public Remote GenerateRemote(Repo repo)
         {
             var path = GenerateRemoteFlatGit(repo.Path, out var name);

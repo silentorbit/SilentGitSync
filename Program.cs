@@ -23,7 +23,7 @@ namespace SilentOrbit
             }
 
             var scanner = Scanner.LoadConfig(configPath);
-            scanner.Run();
+            scanner.RunAllRemotes();
         }
     }
 }
