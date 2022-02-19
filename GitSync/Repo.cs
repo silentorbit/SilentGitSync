@@ -212,18 +212,16 @@ namespace SilentOrbit.GitSync
             if (IsSSH == false)
                 throw new InvalidOperationException();
 
-            using (var p = new Process())
+            using var p = new Process();
+            p.StartInfo = new ProcessStartInfo
             {
-                p.StartInfo = new ProcessStartInfo
-                {
-                    FileName = "ssh",
-                    Arguments = SshHost + " " + args,
-                    UseShellExecute = false,
-                };
-                p.Start();
-                p.WaitForExit();
-                return p.ExitCode;
-            }
+                FileName = "ssh",
+                Arguments = SshHost + " " + args,
+                UseShellExecute = false,
+            };
+            p.Start();
+            p.WaitForExit();
+            return p.ExitCode;
         }
 
         int RunGit(string args, out string output)
@@ -282,6 +280,7 @@ namespace SilentOrbit.GitSync
                 psi.Arguments = args;
             }
             psi.UseShellExecute = false;
+            
             using (var p = new Process())
             {
                 p.StartInfo = psi;
