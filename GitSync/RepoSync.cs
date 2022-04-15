@@ -11,7 +11,7 @@ namespace SilentOrbit.GitSync
     {
         public static void SyncRepo(Repo source, Remote target)
         {
-            Console.WriteLine(" === " + source);
+            Console.WriteLine(" === " + source.Path);
 
             while (source.HasUncommittedChanges())
             {
@@ -35,7 +35,11 @@ namespace SilentOrbit.GitSync
             }
 
             //Remote config
-            Console.WriteLine(" === [" + target.Name + "] " + target.Git);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("     [" + target.Name + "] ");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine(target.Git);
+            Console.ResetColor();
 
             source.Config("pack.packSizeLimit", "1g");
 
