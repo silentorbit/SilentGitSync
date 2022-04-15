@@ -11,7 +11,7 @@ namespace SilentOrbit.GitSync
     {
         public static void SyncRepo(Repo source, Remote target)
         {
-            Console.WriteLine(" === " + source.Path);
+            Console.WriteLine(" === " + source.NicePath);
 
             while (source.HasUncommittedChanges())
             {

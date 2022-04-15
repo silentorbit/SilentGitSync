@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SilentOrbit.Disk;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,6 +11,11 @@ namespace SilentOrbit.GitSync
 {
     class Repo
     {
+        public string NicePath { get; }
+
+        /// <summary>
+        /// Local file or remote url
+        /// </summary>
         public string Path { get; }
 
         public bool IsSSH { get; }
@@ -39,26 +45,16 @@ namespace SilentOrbit.GitSync
             get
             {
                 var bare = Path.EndsWith(".git");
-#if DEBUG
-                switch (Path)
-                {
-                    case "R:\\Git\\Adductor\\DriveSync.git":
-                        Debug.Assert(bare == true);
-                        break;
-                    default:
-                        Debug.Assert(bare == false);
-                        break;
-                }
-#endif
                 return bare;
             }
         }
 
         public bool IsWorkTree { get; }
 
-        public Repo(string path)
+        public Repo(string path, string nicePath = null)
         {
             this.Path = path;
+            this.NicePath = nicePath ?? path;
 
             {
                 var ma = new Regex("^ssh://[a-z]+@([a-z.]+)/(.*)$").Match(path);
@@ -106,7 +102,7 @@ namespace SilentOrbit.GitSync
             throw new NotImplementedException();
         }
 
-        public override string ToString() => Path;
+        public override string ToString() => NicePath;
 
         public bool Exists()
         {
@@ -280,7 +276,7 @@ namespace SilentOrbit.GitSync
                 psi.Arguments = args;
             }
             psi.UseShellExecute = false;
-            
+
             using (var p = new Process())
             {
                 p.StartInfo = psi;

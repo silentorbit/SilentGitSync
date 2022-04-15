@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using SilentOrbit.Disk;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,11 +51,11 @@ namespace SilentOrbit.GitSync
 
             if (config.RecursiveOnly)
             {
-                Scan(config.Path, remoteBase, skipRoot: true);
+                Scan((DirPath)config.Path, remoteBase, skipRoot: true);
             }
             else if (config.Recursive)
             {
-                Scan(config.Path, remoteBase);
+                Scan((DirPath)config.Path, remoteBase);
             }
             else
             {
@@ -68,20 +69,18 @@ namespace SilentOrbit.GitSync
             }
         }
 
-        static void Scan(string sourceBase, RemoteBase remoteBase, bool skipRoot = false)
+        static void Scan(DirPath sourceBase, RemoteBase remoteBase, bool skipRoot = false)
         {
             foreach (var gitPath in ScanGit(sourceBase))
             {
                 if (skipRoot)
                 {
-                    if (Path.GetDirectoryName(gitPath) == sourceBase)
+                    if (gitPath.Parent == sourceBase)
                         continue;
                 }
-                if (gitPath.StartsWith(@"C:\Users\peter\Adductor\DriveSync\My Drive"))
-                    continue;
 
-                var repoPath = Path.GetDirectoryName(gitPath);
-                var source = new Repo(repoPath);
+                var repoPath = gitPath.Parent;
+                var source = new Repo(repoPath.PathFull, (repoPath - sourceBase).PathRel);
                 if (source.IsWorkTree)
                     continue; //Skip worktrees as their main repo will be taken care of
 
@@ -90,14 +89,14 @@ namespace SilentOrbit.GitSync
             }
         }
 
-        static IEnumerable<string> ScanGit(string root)
+        static IEnumerable<FullDiskPath> ScanGit(DirPath root)
         {
-            var list = new List<string>();
+            var list = new List<FullDiskPath>();
 
-            foreach (var path in Directory.EnumerateDirectories(root, ".git", SearchOption.AllDirectories))
+            foreach (var path in root.GetDirectories(".git", SearchOption.AllDirectories))
                 list.Add(path);
 
-            foreach (var path in Directory.EnumerateFiles(root, ".git", SearchOption.AllDirectories))
+            foreach (var path in root.GetFiles(".git", SearchOption.AllDirectories))
                 list.Add(path);
 
             //Reverese sort order to make sure sub repos are synchronized before the main repos are
