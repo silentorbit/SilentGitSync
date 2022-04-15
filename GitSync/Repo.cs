@@ -54,7 +54,9 @@ namespace SilentOrbit.GitSync
         public Repo(string path, string nicePath = null)
         {
             this.Path = path;
-            this.NicePath = nicePath ?? path;
+            this.NicePath = nicePath;
+            if (string.IsNullOrWhiteSpace(nicePath))
+                this.NicePath = path;
 
             {
                 var ma = new Regex("^ssh://[a-z]+@([a-z.]+)/(.*)$").Match(path);
