@@ -57,7 +57,7 @@ class Repo
 
     public Repo(string path, string toStringPath = null)
     {
-        this.Path = path;
+        this.Path = path ?? throw new ArgumentNullException();
         this.ToStringPath = toStringPath ?? path;
 
         {

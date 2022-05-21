@@ -20,6 +20,9 @@ public class RepoConfig
     /// </summary>
     public bool RecursiveOnly { get; set; }
 
+    /// <summary>
+    /// Remote names
+    /// </summary>
     public List<string> Remote { get; set; } = new List<string>();
 
     public override string ToString()

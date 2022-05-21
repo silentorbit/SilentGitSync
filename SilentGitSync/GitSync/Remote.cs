@@ -5,17 +5,13 @@
 /// </summary>
 class Remote
 {
-    public readonly SyncConfig SyncConfig;
     public string Name { get; set; }
     public Repo Git { get; set; }
 
-    public Remote(SyncConfig config, string remoteName, string remotePath)
+    public Remote(string remoteName, string remotePath)
     {
-        this.SyncConfig = config;
-        this.Name = remoteName;
-        if (remotePath == null)
-            remotePath = config.Remote[Name];
-        this.Git = new Repo(remotePath);
+        this.Name = remoteName ?? throw new ArgumentNullException();
+        this.Git = new Repo(remotePath ?? throw new ArgumentNullException());
     }
 
     public override string ToString()
@@ -36,6 +32,6 @@ class Remote
         else
             path = path.TrimEnd('\\') + "\\" + subPath.Replace("/", "\\").TrimStart('\\');
 
-        return new Remote(SyncConfig, Name, path);
+        return new Remote(Name, path);
     }
 }

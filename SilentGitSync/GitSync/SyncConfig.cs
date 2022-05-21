@@ -6,17 +6,12 @@ public partial class SyncConfig
     /// Key: git remote name
     /// Value: remote path/url
     /// </summary>
-    public Dictionary<string, string> Remote { get; set; } = new Dictionary<string, string>();
+    public List<RemoteConfig> Remote { get; set; } = new List<RemoteConfig>();
 
     /// <summary>
     /// Scan these paths and subdirectories for any git repo.
     /// </summary>
     public List<RepoConfig> Repo { get; set; } = new List<RepoConfig>();
-
-    /// <summary>
-    /// Map generated remote url to custom url.
-    /// </summary>
-    public Dictionary<string, string> RemoteAlias { get; set; } = new Dictionary<string, string>();
 
     /// <summary>
     /// Fetch and merge before push
@@ -33,9 +28,19 @@ public partial class SyncConfig
         {
             foreach (var remote in r.Remote)
             {
-                if (Remote.ContainsKey(remote) == false)
+                if (Remote.Any(r => r.Name == remote))
+                    continue;
+                else
                     throw new ArgumentException("Remote " + remote + " references in " + r.Path + " does not exist in list of remotes");
             }
         }
     }
+
+    public RemoteConfig AddRemote(string name, string url)
+    {
+        var remote = new RemoteConfig { Name = name, Path = url };
+        this.Remote.Add(remote);
+        return remote;
+    }
+
 }

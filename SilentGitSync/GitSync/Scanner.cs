@@ -2,43 +2,47 @@
 
 public class Scanner
 {
-    readonly SyncConfig config;
+    readonly SyncConfig syncConfig;
 
     public Scanner(SyncConfig config)
     {
-        this.config = config;
+        this.syncConfig = config;
 
         config.Validate();
     }
 
     public void RunAllRemotes()
     {
-        foreach (var remoteName in config.Remote.Keys)
-            RunRemote(remoteName);
+        foreach (var remote in syncConfig.Remote)
+            RunRemote(remote);
     }
 
     public void RunRemote(string remoteName)
     {
-        foreach (var repo in config.Repo)
+        var remote = syncConfig.Remote.First(r => r.Name == remoteName);
+        RunRemote(remote);
+    }
+
+    public void RunRemote(RemoteConfig remote)
+    {
+        foreach (var repo in syncConfig.Repo)
         {
-            RunRepo(repo, remoteName);
+            RunRepo(repo, remote);
         }
     }
 
-    void RunRepo(RepoConfig config, string remoteName)
+    void RunRepo(RepoConfig config, RemoteConfig remoteConfig)
     {
-        if (config.Remote.Contains(remoteName) == false)
+        if (config.Remote.Contains(remoteConfig.Name) == false)
             return;
-
-        var remoteBase = new RemoteBase(this.config, remoteName);
 
         if (config.RecursiveOnly)
         {
-            Scan((DirPath)config.Path, remoteBase, skipRoot: true);
+            Scan((DirPath)config.Path, remoteConfig, skipRoot: true);
         }
         else if (config.Recursive)
         {
-            Scan((DirPath)config.Path, remoteBase);
+            Scan((DirPath)config.Path, remoteConfig);
         }
         else
         {
@@ -47,12 +51,12 @@ public class Scanner
             if (gitRepo.IsWorkTree)
                 return; //Skip worktrees as their main repo will be taken care of
 
-            var remote = remoteBase.GenerateRemote(gitRepo);
-            RepoSync.SyncRepo(gitRepo, remote);
+            Remote remote = remoteConfig.GetRemote(gitRepo);
+            RepoSync.SyncRepo(gitRepo, remote, syncConfig);
         }
     }
 
-    static void Scan(DirPath sourceBase, RemoteBase remoteBase, bool skipRoot = false)
+    void Scan(DirPath sourceBase, RemoteConfig remoteConfig, bool skipRoot = false)
     {
         foreach (var gitPath in ScanGit(sourceBase))
         {
@@ -67,8 +71,8 @@ public class Scanner
             if (source.IsWorkTree)
                 continue; //Skip worktrees as their main repo will be taken care of
 
-            var target = remoteBase.GenerateRemote(source);
-            RepoSync.SyncRepo(source, target);
+            var target = remoteConfig.GetRemote(source);
+            RepoSync.SyncRepo(source, target, syncConfig);
         }
     }
 
