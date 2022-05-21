@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RunGitSync", "RunGitSync\RunGitSync.csproj", "{D46128D3-F00F-41F6-92B8-EA748E38D2CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SilentGitSync", "SilentGitSync\SilentGitSync.csproj", "{CF02D07C-ADE2-4672-A92D-B4C1F1D9629B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D46128D3-F00F-41F6-92B8-EA748E38D2CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D46128D3-F00F-41F6-92B8-EA748E38D2CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D46128D3-F00F-41F6-92B8-EA748E38D2CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D46128D3-F00F-41F6-92B8-EA748E38D2CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF02D07C-ADE2-4672-A92D-B4C1F1D9629B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF02D07C-ADE2-4672-A92D-B4C1F1D9629B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF02D07C-ADE2-4672-A92D-B4C1F1D9629B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF02D07C-ADE2-4672-A92D-B4C1F1D9629B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E95DEE1-A64D-4E5E-8330-DE0C9EA54E78}
+	EndGlobalSection
+EndGlobal
