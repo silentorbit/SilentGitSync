@@ -32,7 +32,7 @@ class Repo
             return false;
 
         Console.WriteLine(output);
-        var lines = output.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+        var lines = output.Trim('\r', '\n', ' ').Split('\n');
         return lines.Length > 0;
     }
 

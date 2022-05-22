@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>
+      net48;
+      netstandard2.0;
+      net5.0;net6.0;
+    </TargetFrameworks>
     <LangVersion>10</LangVersion>
     <RootNamespace>SilentOrbit</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="SilentOrbit.SilentDisk" Version="0.0.6" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>SilentOrbit.SilentGitSync</PackageId>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
+    
     <Authors>hultqvist</Authors>
     <Company>SilentOrbit</Company>
     <Title>SilentGitSync - Push all git repos</Title>
@@ -26,5 +26,10 @@
   <ItemGroup>
     <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="." />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <PackageReference Include="SilentOrbit.SilentDisk" Version="0.0.6" />
+  </ItemGroup>
+
+
 </Project>
