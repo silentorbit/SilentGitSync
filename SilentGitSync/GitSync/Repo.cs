@@ -153,6 +153,14 @@ class Repo
         RunGitThrow("config --local " + key + " " + value);
     }
 
+    /// <summary>
+    /// Return non zero exist code on error
+    /// </summary>
+    internal int ConfigAllowError(string key, string value)
+    {
+        return RunGit("config --local " + key + " " + value);
+    }
+
     internal void AddRemote(Remote remote)
     {
         RunGitThrow("remote add " + remote.Name + " \"" + remote.Git.Path + "\"");

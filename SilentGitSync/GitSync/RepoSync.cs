@@ -118,11 +118,19 @@ static class RepoSync
                     goto retryTarget;
             }
 
+            //New config needed to allow changing config on remote "untrusted FS owner"
+            //Neither of these workarounds should be applied automatically
+            //Workaround 1: add path to safe.directory
+            //if (targetGit.IsSSH == false)
+            //    targetGit.RunGitThrow("config --global --add safe.directory \"" + targetGit.Path.Replace('\\', '/') + "\"");
+            //Workaround 2: Add once
+            // git config --global --add safe.directory *
+
             //Pack Size Max 1GB
             //Will come in effect on the next "git gc"
-            targetGit.Config("pack.packSizeLimit", "1g");
-            targetGit.Config("receive.denyNonFastForwards", "true");
-            targetGit.Config("receive.denyDeletes", "true");
+            targetGit.ConfigAllowError("pack.packSizeLimit", "1g");
+            targetGit.ConfigAllowError("receive.denyNonFastForwards", "true");
+            targetGit.ConfigAllowError("receive.denyDeletes", "true");
         }
 
     //Add remote and push
