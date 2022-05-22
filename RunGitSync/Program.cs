@@ -1,18 +1,30 @@
 ﻿using SilentOrbit;
+using SilentOrbit.GitSync;
 
-const string defaultConfigFilename = "GitSync.json";
+//Config in code
+var config = new SyncConfig();
 
-string? configPath = null;
-if (args.Length == 0)
-    configPath = defaultConfigFilename;
-else if (args.Length == 1)
-    configPath = args[0];
-
-if (configPath == null)
+//Source repos
+config.Repo.Add(new RepoConfig
 {
-    Console.Error.WriteLine("Usage: GitSync.exe <path to GitConfig.json>");
-    return;
-}
+    Path = @"C:\MyRepos",
+    Remote = new List<string> { "github", "external" }
+});
 
-var scanner = ConfigLoader.LoadConfig(configPath);
+//Target repo
+config.AddRemote("external", @"E:\Git\");
+
+//Target repo with custom remote for some repos
+var github = config.AddRemote("github", @"git@github.com:myaccount/");
+github.AddAlias("SilentDisk", "git@github.com:silentorbit/SilentDisk.git");
+github.AddAlias("SilentGitSync", "git@github.com:silentorbit/SilentGitSync.git");
+
+//Start the sync
+var scanner = new Scanner(config);
 scanner.RunAllRemotes();
+
+
+
+//Load config from JSON file
+//var scanner = ConfigLoader.LoadConfig("GitSync.json");
+//scanner.RunAllRemotes();

@@ -1,9 +1,10 @@
-﻿using SilentOrbit.Tools;
-
-namespace SilentOrbit.GitSync;
+﻿namespace SilentOrbit.GitSync.Scanning;
 
 static class RepoSync
 {
+    /// <summary>
+    /// Update remote config and push changes
+    /// </summary>
     public static void SyncRepo(Repo source, Remote target, SyncConfig config)
     {
         Console.WriteLine(" === " + source.ToStringPath);
@@ -46,7 +47,7 @@ static class RepoSync
             FixRemote(source, target);
 
             //Fetch and Merge
-            if (config.FetchBeforePush && existed && (source.HasUncommittedChanges() == false))
+            if (config.FetchBeforePush && existed && source.HasUncommittedChanges() == false)
             {
                 source.Fetch(target);
                 /* Disabled merge since we can't be sure what branch we're on

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SilentOrbit.GitSync;
+﻿namespace SilentOrbit.GitSync;
 
 public class RemoteConfig
 {
@@ -23,13 +17,14 @@ public class RemoteConfig
 
     /// <summary>
     /// Map generated remote url to custom url.
+    /// <see cref="AddAlias(string, string)"/>
     /// </summary>
     public Dictionary<string, string> RemoteAlias { get; set; } = new Dictionary<string, string>();
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="name">Repo base name without .git</param>
+    /// <param name="name">Repo base name without .git or full remote path</param>
     /// <param name="path">new remote path</param>
     public void AddAlias(string name, string path)
     {
@@ -39,7 +34,11 @@ public class RemoteConfig
     internal Remote GetRemote(Repo repo)
     {
         var name = System.IO.Path.GetFileName(repo.Path);
+        return GetRemote(name);
+    }
 
+    internal Remote GetRemote(string name)
+    {
         var path = GenerateRemoteFlatGit(name) ?? throw new NullReferenceException();
         if (RemoteAlias.TryGetValue(path, out var newpath))
         {

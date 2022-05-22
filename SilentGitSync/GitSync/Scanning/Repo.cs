@@ -1,7 +1,8 @@
-﻿using static System.IO.Path;
+﻿namespace SilentOrbit.GitSync.Scanning;
 
-namespace SilentOrbit.GitSync;
-
+/// <summary>
+/// Local or remote repo
+/// </summary>
 class Repo
 {
     /// <summary>
@@ -57,8 +58,8 @@ class Repo
 
     public Repo(string path, string toStringPath = null)
     {
-        this.Path = path ?? throw new ArgumentNullException();
-        this.ToStringPath = toStringPath ?? path;
+        Path = path ?? throw new ArgumentNullException();
+        ToStringPath = toStringPath ?? path;
 
         {
             var ma = new Regex("^ssh://[a-z]+@([a-z.]+)/(.*)$").Match(path);
@@ -90,7 +91,7 @@ class Repo
         if (isSSH)
             return false;
 
-        var gitPath = Combine(path, ".git");
+        var gitPath = System.IO.Path.Combine(path, ".git");
         if (Directory.Exists(gitPath))
             return false;
         if (File.Exists(gitPath) == false)
@@ -113,7 +114,7 @@ class Repo
     {
         if (IsSSH)
         {
-            int result = RunSsh("'[ -d " + EscapeSpace(SshLocalPath) + " ]'");
+            var result = RunSsh("'[ -d " + EscapeSpace(SshLocalPath) + " ]'");
             return result == 0;
         }
         return Directory.Exists(Path);
@@ -136,7 +137,7 @@ class Repo
     /// <returns></returns>
     internal string RemoteGetUrl(string remote)
     {
-        int res = RunGit("remote get-url " + remote, out string output);
+        var res = RunGit("remote get-url " + remote, out var output);
         if (res != 0)
             return null;
         output = output.Trim(' ', '\r', '\n');
@@ -178,8 +179,8 @@ class Repo
         // push -u --recurse-submodules=on-demand --progress "nas" refs/heads/master:refs/heads/master
         foreach (var branch in branches)
         {
-            RunGit("rev-parse " + branch + " --", out string localHash);
-            RunGit("rev-parse " + remote.Name + "/" + branch + " --", out string remoteHash);
+            RunGit("rev-parse " + branch + " --", out var localHash);
+            RunGit("rev-parse " + remote.Name + "/" + branch + " --", out var remoteHash);
             if (localHash == remoteHash && !string.IsNullOrWhiteSpace(localHash))
                 continue;
 
@@ -189,7 +190,7 @@ class Repo
 
     public List<string> BranchList(bool remote = false)
     {
-        var exit = RunGit("branch --list" + (remote ? " --all" : ""), out string output);
+        var exit = RunGit("branch --list" + (remote ? " --all" : ""), out var output);
         if (exit != 0)
             throw new Exception("Failed to run: git branch --list");
         var lines = output.Split('\n');
@@ -240,7 +241,7 @@ class Repo
         if (IsSSH)
         {
             psi.FileName = "ssh";
-            string cdPath = "cd \"" + SshLocalPath + "\";";
+            var cdPath = "cd \"" + SshLocalPath + "\";";
             psi.Arguments = SshHost + " \"" + Escape(cdPath) + "git " + Escape(args) + "\"";
         }
         else
@@ -264,7 +265,7 @@ class Repo
 
     void RunGitThrow(string args)
     {
-        int result = RunGit(args);
+        var result = RunGit(args);
         if (result != 0)
             throw new Exception("Command failed: git " + args);
     }
@@ -273,12 +274,12 @@ class Repo
     {
         var psi = new ProcessStartInfo();
 
-        bool gitWorkDir = args.StartsWith("init ") == false;
+        var gitWorkDir = args.StartsWith("init ") == false;
 
         if (IsSSH)
         {
             psi.FileName = "ssh";
-            string cdPath = gitWorkDir ? "cd \"" + SshLocalPath + "\";" : "";
+            var cdPath = gitWorkDir ? "cd \"" + SshLocalPath + "\";" : "";
             psi.Arguments = SshHost + " \"" + Escape(cdPath) + "git " + Escape(args) + "\"";
         }
         else
@@ -303,12 +304,12 @@ class Repo
     {
         var psi = new ProcessStartInfo();
 
-        bool gitWorkDir = args.StartsWith("init ") == false;
+        var gitWorkDir = args.StartsWith("init ") == false;
 
         if (IsSSH)
         {
             psi.FileName = "ssh";
-            string cdPath = gitWorkDir ? "cd \"" + SshLocalPath + "\";" : "";
+            var cdPath = gitWorkDir ? "cd \"" + SshLocalPath + "\";" : "";
             psi.Arguments = SshHost + " \"" + Escape(cdPath) + "git " + Escape(args) + "\"";
         }
         else

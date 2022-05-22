@@ -4,25 +4,54 @@ public class Scanner
 {
     readonly SyncConfig syncConfig;
 
-    public Scanner(SyncConfig config)
+    public Scanner(SyncConfig syncConfig)
     {
-        this.syncConfig = config;
+        this.syncConfig = syncConfig;
 
-        config.Validate();
+        Validate();
     }
 
+    /// <summary>
+    /// Check configuration for mistakes
+    /// </summary>
+    void Validate()
+    {
+        //Make sure all repo remotes exists in Remote.
+        foreach (var r in syncConfig.Repo)
+        {
+            foreach (var remote in r.Remote)
+            {
+                if (syncConfig.Remote.Any(r => r.Name == remote))
+                    continue;
+                else
+                    throw new ArgumentException("Remote " + remote + " references in " + r.Path + " does not exist in list of remotes");
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// Push all local repos to all remotes
+    /// </summary>
     public void RunAllRemotes()
     {
         foreach (var remote in syncConfig.Remote)
             RunRemote(remote);
     }
 
+    /// <summary>
+    /// Push all local repos to <paramref name="remoteName"/>
+    /// </summary>
     public void RunRemote(string remoteName)
     {
         var remote = syncConfig.Remote.First(r => r.Name == remoteName);
         RunRemote(remote);
     }
 
+    /// <summary>
+    /// Push all local repos to <paramref name="remote"/>
+    /// </summary>
     public void RunRemote(RemoteConfig remote)
     {
         foreach (var repo in syncConfig.Repo)
@@ -47,12 +76,12 @@ public class Scanner
         else
         {
             //Single repo
-            var gitRepo = new Repo(config.Path);
-            if (gitRepo.IsWorkTree)
+            var source = new Repo(config.Path);
+            if (source.IsWorkTree)
                 return; //Skip worktrees as their main repo will be taken care of
 
-            Remote remote = remoteConfig.GetRemote(gitRepo);
-            RepoSync.SyncRepo(gitRepo, remote, syncConfig);
+            Remote remote = remoteConfig.GetRemote(source);
+            RepoSync.SyncRepo(source, remote, syncConfig);
         }
     }
 
