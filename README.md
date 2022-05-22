@@ -7,12 +7,10 @@ Makes sure all your git repos are fully pushed to the right location
  - Push new changes
  
 # Usage
- 
-See RunGitSync for project example.
- 
- - Add reference to SilentGitSync
- 
- ```C#
+
+[Install NuGet package: SilentOrbit.SilentGitSync](https://www.nuget.org/packages/SilentOrbit.SilentGitSync/)
+
+```C#
 //Config in code
 var config = new SyncConfig();
 
