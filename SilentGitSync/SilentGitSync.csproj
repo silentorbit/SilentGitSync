@@ -33,8 +33,14 @@
     <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="." />
   </ItemGroup>
 
+  <!--
   <ItemGroup>
     <PackageReference Include="SilentOrbit.SilentDisk" Version="0.0.9" />
+  </ItemGroup>
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SilentDisk\SilentDisk\SilentDisk.csproj" />
   </ItemGroup>
 
 
