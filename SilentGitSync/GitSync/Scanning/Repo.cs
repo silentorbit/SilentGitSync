@@ -149,6 +149,11 @@ class Repo
         RunGitThrow("remote set-url " + remote.Name + " \"" + remote.Git.Path + "\"");
     }
 
+    internal void ConfigGlobalSafe()
+    {
+        RunGitThrow("config --global --add safe.directory \"" + Path + "\"");
+    }
+
     internal void Config(string key, string value)
     {
         RunGitThrow("config --local " + key + " " + value);

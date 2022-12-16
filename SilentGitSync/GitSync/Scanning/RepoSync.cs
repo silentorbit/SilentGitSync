@@ -1,29 +1,31 @@
-﻿namespace SilentOrbit.GitSync.Scanning;
+﻿using System.IO;
+
+namespace SilentOrbit.GitSync.Scanning;
 
 static class RepoSync
 {
     /// <summary>
     /// Update remote config and push changes
     /// </summary>
-    public static void SyncRepo(Repo source, Remote target, SyncConfig config)
+    public static void SyncRepo(Repo repo, Remote target, SyncConfig config)
     {
-        Console.WriteLine(" === " + source.ToStringPath);
+        Console.WriteLine(" === " + repo.ToStringPath);
 
-        while (source.HasUncommittedChanges())
+        while (repo.HasUncommittedChanges())
         {
             //source.Status();
 
             var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
-            psi.WorkingDirectory = source.Path;
+            psi.WorkingDirectory = repo.Path;
             using (var p = Process.Start(psi))
             {
                 p.WaitForExit();
             }
 
-            if (source.HasUncommittedChanges())
+            if (repo.HasUncommittedChanges())
             {
                 //Still uncommited changes
-                if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
+                if (Confirm.Retry("Detected uncommitted changes in " + repo.Path))
                     continue;
             }
 
@@ -37,19 +39,20 @@ static class RepoSync
         Console.WriteLine(target.Git);
         Console.ResetColor();
 
-        source.Config("pack.packSizeLimit", "1g");
+        repo.ConfigGlobalSafe();
+        repo.Config("pack.packSizeLimit", "1g");
 
     retry:
         try
         {
             var existed = target.Git.IsSSH || target.Git.Exists();
 
-            FixRemote(source, target);
+            FixRemote(repo, target);
 
             //Fetch and Merge
-            if (config.FetchBeforePush && existed && source.HasUncommittedChanges() == false)
+            if (config.FetchBeforePush && existed && repo.HasUncommittedChanges() == false)
             {
-                source.Fetch(target);
+                repo.Fetch(target);
                 /* Disabled merge since we can't be sure what branch we're on
                  * Better to keep this manually
                 if (source.IsBare == false)
@@ -71,16 +74,16 @@ static class RepoSync
                     }
                 }*/
 
-                while (source.HasUncommittedChanges())
+                while (repo.HasUncommittedChanges())
                 {
                     var psi = new ProcessStartInfo(@"C:\Program Files (x86)\GitExtensions\GitExtensions.exe", "commit");
-                    psi.WorkingDirectory = source.Path;
+                    psi.WorkingDirectory = repo.Path;
                     using (var p = Process.Start(psi))
                     {
                         p.WaitForExit();
                     }
 
-                    if (Confirm.Retry("Detected uncommitted changes in " + source.Path))
+                    if (Confirm.Retry("Detected uncommitted changes in " + repo.Path))
                         continue;
 
                     break;
@@ -88,7 +91,7 @@ static class RepoSync
             }
 
             //Push
-            source.Push(target);
+            repo.Push(target);
         }
         catch (Exception ex)
         {
